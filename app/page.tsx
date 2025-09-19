@@ -1,7 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef, Suspense } from "react"
-import dynamic from "next/dynamic"
+import { useState, useEffect, useRef } from "react"
 import {
   ChevronUp,
   ChevronDown,
@@ -16,27 +15,6 @@ import {
   Download,
   Globe,
 } from "lucide-react"
-
-// Dynamic imports for 3D components to avoid SSR issues
-const Background3D = dynamic(() => import("@/components/3d-background"), {
-  ssr: false,
-  loading: () => null,
-})
-
-const Transition3D = dynamic(() => import("@/components/3d-transition"), {
-  ssr: false,
-  loading: () => null,
-})
-
-const Console3DView = dynamic(() => import("@/components/3d-console"), {
-  ssr: false,
-  loading: () => null,
-})
-
-const TechIcons3D = dynamic(() => import("@/components/3d-tech-icons"), {
-  ssr: false,
-  loading: () => null,
-})
 
 // Language content
 const content = {
@@ -107,11 +85,8 @@ const content = {
 
     // Projects summary
     linkerProSummary: "Plataforma para conectar empresas con freelancers",
-    linkerStoreSummary: "E-commerce con Amazon y Mercado Libre afiliados",
+    linkerStoreSummary: "E-commerce con afiliados Amazon y Mercado Libre",
     viewProject: "Ver Proyecto",
-
-    // 3D Transition
-    switchingLanguage: "CAMBIANDO IDIOMA...",
   },
   en: {
     // Navigation and sections
@@ -181,9 +156,6 @@ const content = {
     linkerProSummary: "Platform to connect companies with freelancers",
     linkerStoreSummary: "E-commerce with Amazon and Mercado Libre affiliates",
     viewProject: "View Project",
-
-    // 3D Transition
-    switchingLanguage: "SWITCHING LANGUAGE...",
   },
 }
 
@@ -194,7 +166,6 @@ export default function Portfolio() {
   const [showContactModal, setShowContactModal] = useState(false)
   const [audioEnabled, setAudioEnabled] = useState(false)
   const [language, setLanguage] = useState<"es" | "en">("es")
-  const [show3DBackground, setShow3DBackground] = useState(true)
   const projectsRef = useRef<HTMLDivElement>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
 
@@ -205,9 +176,6 @@ export default function Portfolio() {
   const [nameIsDeleting, setNameIsDeleting] = useState(false)
   const [titleIsDeleting, setTitleIsDeleting] = useState(false)
   const [showTitle, setShowTitle] = useState(false)
-
-  // Add a new state for language transition animation
-  const [isLanguageTransitioning, setIsLanguageTransitioning] = useState(false)
 
   const t = content[language]
   const nameString = t.name
@@ -286,7 +254,6 @@ export default function Portfolio() {
 
   // Initialize audio context
   const initAudio = () => {
-    if (typeof window === "undefined") return
     if (!audioContextRef.current) {
       audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
     }
@@ -295,7 +262,7 @@ export default function Portfolio() {
 
   // Create retro sound effects
   const playSound = (type: "hover" | "click" | "push" | "button" | "navigation" | "modal" | "success" | "error") => {
-    if (typeof window === "undefined" || !audioEnabled || !audioContextRef.current) return
+    if (!audioEnabled || !audioContextRef.current) return
 
     const audioContext = audioContextRef.current
     const oscillator = audioContext.createOscillator()
@@ -457,42 +424,42 @@ export default function Portfolio() {
 
   useEffect(() => {
     // Matrix-style background animation for home section
-    if (typeof window === "undefined" || currentSection !== 0) return
+    if (currentSection === 0) {
+      const matrixContainer = document.getElementById("matrix-bg")
+      if (matrixContainer) {
+        // Clear existing characters
+        matrixContainer.innerHTML = ""
 
-    const matrixContainer = document.getElementById("matrix-bg")
-    if (matrixContainer) {
-      // Clear existing characters
-      matrixContainer.innerHTML = ""
+        const characters =
+          "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン"
+        const columns = Math.floor(window.innerWidth / 20)
 
-      const characters =
-        "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン"
-      const columns = Math.floor(window.innerWidth / 20)
-
-      for (let i = 0; i < columns; i++) {
-        const char = document.createElement("div")
-        char.className = "matrix-char"
-        char.textContent = characters[Math.floor(Math.random() * characters.length)]
-        char.style.left = `${i * 20}px`
-        char.style.animationDelay = `${Math.random() * 3}s`
-        char.style.animationDuration = `${3 + Math.random() * 2}s`
-        matrixContainer.appendChild(char)
-      }
-
-      // Add continuous character generation
-      const interval = setInterval(() => {
-        if (currentSection === 0) {
-          const chars = matrixContainer.querySelectorAll(".matrix-char")
-          chars.forEach((char) => {
-            if (Math.random() > 0.98) {
-              char.textContent = characters[Math.floor(Math.random() * characters.length)]
-            }
-          })
-        } else {
-          clearInterval(interval)
+        for (let i = 0; i < columns; i++) {
+          const char = document.createElement("div")
+          char.className = "matrix-char"
+          char.textContent = characters[Math.floor(Math.random() * characters.length)]
+          char.style.left = `${i * 20}px`
+          char.style.animationDelay = `${Math.random() * 3}s`
+          char.style.animationDuration = `${3 + Math.random() * 2}s`
+          matrixContainer.appendChild(char)
         }
-      }, 100)
 
-      return () => clearInterval(interval)
+        // Add continuous character generation
+        const interval = setInterval(() => {
+          if (currentSection === 0) {
+            const chars = matrixContainer.querySelectorAll(".matrix-char")
+            chars.forEach((char) => {
+              if (Math.random() > 0.98) {
+                char.textContent = characters[Math.floor(Math.random() * characters.length)]
+              }
+            })
+          } else {
+            clearInterval(interval)
+          }
+        }, 100)
+
+        return () => clearInterval(interval)
+      }
     }
   }, [currentSection])
 
@@ -528,21 +495,9 @@ export default function Portfolio() {
     playSound("success")
   }
 
-  // Update the toggleLanguage function to include the 3D transition
   const toggleLanguage = () => {
-    playSound("modal")
-    setIsLanguageTransitioning(true)
-
-    // Start transition animation
-    setTimeout(() => {
-      setLanguage((prev) => (prev === "es" ? "en" : "es"))
-    }, 1000) // Change language halfway through animation
-
-    // End transition animation
-    setTimeout(() => {
-      setIsLanguageTransitioning(false)
-      playSound("success")
-    }, 2000)
+    playSound("button")
+    setLanguage((prev) => (prev === "es" ? "en" : "es"))
   }
 
   const downloadCV = () => {
@@ -555,11 +510,6 @@ export default function Portfolio() {
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
-  }
-
-  const toggle3DBackground = () => {
-    playSound("button")
-    setShow3DBackground(!show3DBackground)
   }
 
   const renderCurrentSection = () => {
@@ -609,37 +559,18 @@ export default function Portfolio() {
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
-      {/* 3D Background */}
-      {show3DBackground && (
-        <Suspense fallback={null}>
-          <Background3D />
-        </Suspense>
-      )}
-
       {/* Language Toggle Button */}
       <button
         onClick={toggleLanguage}
-        disabled={isLanguageTransitioning}
-        className={`fixed top-4 left-4 z-50 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-bold transition-all enhanced-button border-2 border-purple-400 flex items-center space-x-2 language-button ${
-          isLanguageTransitioning ? "language-switching opacity-75 cursor-not-allowed" : ""
-        }`}
+        className="fixed top-4 left-4 z-50 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-bold transition-all enhanced-button border-2 border-purple-400 flex items-center space-x-2"
         style={{ fontFamily: '"Press Start 2P", monospace', fontSize: "8px" }}
       >
-        <Globe className={`w-4 h-4 ${isLanguageTransitioning ? "animate-spin" : ""}`} />
+        <Globe className="w-4 h-4" />
         <span>{language === "es" ? "English Version" : "Versión Español"}</span>
       </button>
 
-      {/* 3D Toggle Button */}
-      <button
-        onClick={toggle3DBackground}
-        className="fixed top-4 right-4 z-50 bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-lg font-bold transition-all enhanced-button border-2 border-cyan-400 flex items-center space-x-2"
-        style={{ fontFamily: '"Press Start 2P", monospace', fontSize: "8px" }}
-      >
-        <span>{show3DBackground ? "🎮 3D ON" : "🎮 3D OFF"}</span>
-      </button>
-
-      {/* Matrix Background - Only for home section when 3D is off */}
-      {currentSection === 0 && !show3DBackground && <div id="matrix-bg" className="matrix-bg"></div>}
+      {/* Matrix Background - Only for home section */}
+      {currentSection === 0 && <div id="matrix-bg" className="matrix-bg"></div>}
 
       {/* Current Section */}
       <div className={`min-h-screen ${sections[currentSection].bgColor} relative z-10 transition-all duration-500`}>
@@ -652,22 +583,14 @@ export default function Portfolio() {
 
               {/* Right Side - Console */}
               <div className="flex justify-center animate-slide-in-right">
-                <div className="console-enhanced relative">
-                  {show3DBackground && currentSection === 0 ? (
-                    <Suspense fallback={<div className="w-80 h-80 bg-gray-800 rounded-3xl animate-pulse" />}>
-                      <div className="w-80 h-80">
-                        <Console3DView isActive={true} />
-                      </div>
-                    </Suspense>
-                  ) : (
-                    <Console
-                      currentSection={currentSection}
-                      sections={sections}
-                      currentTime={currentTime}
-                      onNavigate={navigateSection}
-                      playSound={playSound}
-                    />
-                  )}
+                <div className="console-enhanced">
+                  <Console
+                    currentSection={currentSection}
+                    sections={sections}
+                    currentTime={currentTime}
+                    onNavigate={navigateSection}
+                    playSound={playSound}
+                  />
                 </div>
               </div>
             </div>
@@ -704,22 +627,6 @@ export default function Portfolio() {
 
       {/* Contact Modal */}
       {showContactModal && <ContactModal onClose={handleCloseModal} playSound={playSound} language={language} />}
-
-      {/* 3D Language Transition */}
-      {isLanguageTransitioning && (
-        <Suspense fallback={null}>
-          <Transition3D isVisible={isLanguageTransitioning} text={t.switchingLanguage} />
-        </Suspense>
-      )}
-
-      {/* Skills 3D View */}
-      {currentSection === 1 && show3DBackground && (
-        <div className="fixed top-0 right-0 w-1/3 h-full z-5 pointer-events-none">
-          <Suspense fallback={null}>
-            <TechIcons3D />
-          </Suspense>
-        </div>
-      )}
     </div>
   )
 }
@@ -1890,66 +1797,6 @@ function ProjectsSummary({ playSound, language }: { playSound: (type: string) =>
               <ExternalLink className="w-3 h-3" />
             </a>
           </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-// Add the LanguageTransition component after the ProjectsSummary function
-function LanguageTransition() {
-  const t = content[language] // Assuming language is accessible here or passed as prop
-
-  return (
-    <div className="fixed inset-0 z-[100] bg-black flex items-center justify-center language-transition-overlay">
-      {/* Matrix-style transition effect */}
-      <div className="absolute inset-0 overflow-hidden">
-        {Array.from({ length: 50 }).map((_, i) => (
-          <div
-            key={i}
-            className="absolute text-green-400 font-mono text-sm opacity-70 animate-matrix-fall"
-            style={{
-              left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 2}s`,
-              animationDuration: `${1 + Math.random()}s`,
-            }}
-          >
-            {Math.random() > 0.5 ? "01" : "ES/EN"}
-          </div>
-        ))}
-      </div>
-
-      {/* Central loading indicator */}
-      <div className="relative z-10 text-center">
-        <div className="w-20 h-20 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <div
-          className="text-white text-lg font-bold animate-pulse"
-          style={{ fontFamily: '"Press Start 2P", monospace' }}
-        >
-          {t.switchingLanguage}
-        </div>
-        <div className="mt-4 flex justify-center space-x-2">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div
-              key={i}
-              className="w-3 h-3 bg-purple-500 rounded-full animate-bounce"
-              style={{ animationDelay: `${i * 0.2}s` }}
-            ></div>
-          ))}
-        </div>
-      </div>
-
-      {/* Glitch effect lines */}
-      <div className="absolute inset-0 pointer-events-none">
-        {Array.from({ length: 10 }).map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent animate-glitch-line"
-            style={{
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 1}s`,
-            }}
-          ></div>
         ))}
       </div>
     </div>

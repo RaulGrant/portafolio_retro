@@ -30,7 +30,7 @@ const content = {
     title: "Desarrollador Full Stack",
     professionalProfile: "PERFIL PROFESIONAL",
     profileDescription:
-      "Ingeniero en Tecnologías de la Información con experiencia en desarrollo web y aplicaciones empresariales. Experto en React, JavaScript,TypeScript, Java Spring Boot, PHP, .NET y Java. Proactivo, adaptable y orientado a resultados.",
+      "Ingeniero en Tecnologías de la Información con experiencia en desarrollo web y aplicaciones empresariales. Experto en React, JavaScript, TypeScript, Java Spring Boot, PHP, .NET y Java. Proactivo, adaptable y orientado a resultados.",
     recentExperience: "EXPERIENCIA RECIENTE",
     educationCerts: "EDUCACIÓN & CERTS",
     techStack: "STACK TECNOLÓGICO",
@@ -431,7 +431,7 @@ export default function Portfolio() {
         matrixContainer.innerHTML = ""
 
         const characters =
-          "01 0 1 0 1 0 1 If Else function var let const return for while do switch case break continue try catch throw new class extends super this true false null undefined NaN Infinity console log error warn info debug table time timeEnd clear setTimeout setInterval Promise async await fetch JSON parse stringify Math random floor ceil round pow sqrt abs sin cos tan PI E document window navigator screen history location addEventListener removeEventListener getElementById querySelector querySelectorAll createElement appendChild removeChild innerHTML textContent style className id name value type href src alt title target rel";
+          "01 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 01 10 ";
         const columns = Math.floor(window.innerWidth / 20)
 
         for (let i = 0; i < columns; i++) {

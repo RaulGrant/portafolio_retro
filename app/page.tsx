@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, Suspense } from "react"
 import {
   ChevronUp,
   ChevronDown,
@@ -12,7 +12,162 @@ import {
   Clock,
   ExternalLink,
   X,
+  Download,
+  Globe,
 } from "lucide-react"
+import Background3D from "@/components/3d-background"
+import Transition3D from "@/components/3d-transition"
+import Console3DView from "@/components/3d-console"
+import TechIcons3D from "@/components/3d-tech-icons"
+
+// Language content
+const content = {
+  es: {
+    // Navigation and sections
+    aboutMe: "Sobre Mí",
+    skills: "Skills",
+    contact: "Contacto",
+    projects: "Mis Proyectos",
+
+    // Home section
+    name: "Raúl De Jesús Vargas Hernández",
+    title: "Desarrollador Full Stack",
+    professionalProfile: "PERFIL PROFESIONAL",
+    profileDescription:
+      "Ingeniero en Tecnologías de la Información con experiencia en desarrollo web y aplicaciones empresariales. Experto en React, JavaScript, Java Spring Boot, PHP y .NET. Proactivo, adaptable y orientado a resultados.",
+    recentExperience: "EXPERIENCIA RECIENTE",
+    educationCerts: "EDUCACIÓN & CERTS",
+    techStack: "STACK TECNOLÓGICO",
+    viewProjects: "Ver Proyectos",
+    contact: "CONTACTAR",
+    downloadCV: "DESCARGAR CV",
+    enableSounds: "🔊 ACTIVAR SONIDOS",
+    soundsHint: "💡 Haz clic en cualquier elemento para escuchar efectos de sonido retro",
+
+    // Experience
+    webDevJr: "Desarrollador Web Jr",
+    webDev: "Desarrollador Web",
+    albaDti: "ALBA DTI",
+    shiftF6: "Shift F6",
+    febJul2025: "Feb 2025 - Jul 2025",
+    janFeb2025: "Ene 2025 - Feb 2025",
+
+    // Education
+    engineeringIT: "Ing. en TI",
+    uptx: "UPTx (2021-2024)",
+    diplomaFullStack: "• Diplomado FullStack - Coderfy",
+    toeflB2: "• TOEFL ITP B2",
+    ciscoAcademy: "• Cisco Networking Academy",
+
+    // Projects
+    linkerProDesc:
+      "Plataforma en desarrollo para conectar empresas con freelancers de manera fácil y rápida. Mantiene seguridad de pago y genera mayor confianza para las empresas, facilitando la conexión entre freelancers y proyectos empresariales.",
+    linkerStoreDesc:
+      "Plataforma e-commerce con afiliados de Amazon y Mercado Libre. Incluye un blog con los mejores artículos industriales. Aún en construcción, pero con buen desempeño hasta el momento.",
+    viewLinkerPro: "Ver LinkerPro",
+    viewLinkerStore: "Ver LinkerStore",
+
+    // Contact
+    contactTitle: "¡HABLEMOS!",
+    contactDescription:
+      "¿Tienes un proyecto en mente? ¡Estoy disponible para colaborar en proyectos interesantes y desafiantes!",
+    location: "📍 Ubicación: Tlaxcala / Hidalgo, México",
+    phone: "📞 Teléfono: +52 246-238-76-22",
+    availability: "🌍 Disponibilidad: Disponible para reubicación",
+    responseTime: "TIEMPO DE RESPUESTA",
+    responseTimeDesc:
+      "Generalmente respondo en menos de 24 horas. Para proyectos urgentes, WhatsApp es la mejor opción.",
+
+    // Contact methods
+    whatsappDesc: "Envíame un mensaje directo",
+    gmailDesc: "Correo profesional",
+    githubDesc: "Revisa mis repositorios",
+    linkedinDesc: "Conectemos profesionalmente",
+
+    // Modal
+    close: "CERRAR",
+
+    // Projects summary
+    linkerProSummary: "Plataforma para conectar empresas con freelancers",
+    linkerStoreSummary: "E-commerce con afiliados Amazon y Mercado Libre",
+    viewProject: "Ver Proyecto",
+
+    // 3D Transition
+    switchingLanguage: "CAMBIANDO IDIOMA...",
+  },
+  en: {
+    // Navigation and sections
+    aboutMe: "About Me",
+    skills: "Skills",
+    contact: "Contact",
+    projects: "My Projects",
+
+    // Home section
+    name: "Raúl De Jesús Vargas Hernández",
+    title: "Full Stack Developer",
+    professionalProfile: "PROFESSIONAL PROFILE",
+    profileDescription:
+      "Results-driven Information Technology Engineer with experience in web development and business applications. Expert in React, JavaScript, Java Spring Boot, PHP and .NET. Proactive, adaptable and results-oriented.",
+    recentExperience: "RECENT EXPERIENCE",
+    educationCerts: "EDUCATION & CERTS",
+    techStack: "TECH STACK",
+    viewProjects: "View Projects",
+    contact: "CONTACT",
+    downloadCV: "DOWNLOAD CV",
+    enableSounds: "🔊 ENABLE SOUNDS",
+    soundsHint: "💡 Click any element to hear retro sound effects",
+
+    // Experience
+    webDevJr: "Web Developer Jr",
+    webDev: "Web Developer",
+    albaDti: "ALBA DTI",
+    shiftF6: "Shift F6",
+    febJul2025: "Feb 2025 - Jul 2025",
+    janFeb2025: "Jan 2025 - Feb 2025",
+
+    // Education
+    engineeringIT: "IT Engineering",
+    uptx: "UPTx (2021-2024)",
+    diplomaFullStack: "• FullStack Diploma - Coderfy",
+    toeflB2: "• TOEFL ITP B2",
+    ciscoAcademy: "• Cisco Networking Academy",
+
+    // Projects
+    linkerProDesc:
+      "Platform in development to connect companies with freelancers easily and quickly. Maintains payment security and generates greater trust for companies, facilitating the connection between freelancers and business projects.",
+    linkerStoreDesc:
+      "E-commerce platform with Amazon and Mercado Libre affiliates. Includes a blog with the best industrial articles. Still under construction, but with good performance so far.",
+    viewLinkerPro: "View LinkerPro",
+    viewLinkerStore: "View LinkerStore",
+
+    // Contact
+    contactTitle: "LET'S TALK!",
+    contactDescription:
+      "Do you have a project in mind? I'm available to collaborate on interesting and challenging projects!",
+    location: "📍 Location: Tlaxcala / Hidalgo, Mexico",
+    phone: "📞 Phone: +52 246-238-76-22",
+    availability: "🌍 Availability: Available for relocation",
+    responseTime: "RESPONSE TIME",
+    responseTimeDesc: "I usually respond in less than 24 hours. For urgent projects, WhatsApp is the best option.",
+
+    // Contact methods
+    whatsappDesc: "Send me a direct message",
+    gmailDesc: "Professional email",
+    githubDesc: "Check my repositories",
+    linkedinDesc: "Let's connect professionally",
+
+    // Modal
+    close: "CLOSE",
+
+    // Projects summary
+    linkerProSummary: "Platform to connect companies with freelancers",
+    linkerStoreSummary: "E-commerce with Amazon and Mercado Libre affiliates",
+    viewProject: "View Project",
+
+    // 3D Transition
+    switchingLanguage: "SWITCHING LANGUAGE...",
+  },
+}
 
 export default function Portfolio() {
   const [currentSection, setCurrentSection] = useState(0)
@@ -20,6 +175,8 @@ export default function Portfolio() {
   const [showProjects, setShowProjects] = useState(false)
   const [showContactModal, setShowContactModal] = useState(false)
   const [audioEnabled, setAudioEnabled] = useState(false)
+  const [language, setLanguage] = useState<"es" | "en">("es")
+  const [show3DBackground, setShow3DBackground] = useState(true)
   const projectsRef = useRef<HTMLDivElement>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
 
@@ -31,21 +188,25 @@ export default function Portfolio() {
   const [titleIsDeleting, setTitleIsDeleting] = useState(false)
   const [showTitle, setShowTitle] = useState(false)
 
-  const nameString = "Raúl De Jesús Vargas Hernández"
-  const titleString = "Desarrollador Full Stack"
+  // Add a new state for language transition animation
+  const [isLanguageTransitioning, setIsLanguageTransitioning] = useState(false)
+
+  const t = content[language]
+  const nameString = t.name
+  const titleString = t.title
 
   const sections = [
     {
       id: "home",
-      title: "Sobre Mí",
+      title: t.aboutMe,
       bgColor: "bg-black",
       consoleIcon: <User className="w-8 h-8 text-white" />,
       consoleBg: "bg-green-400",
-      consoleTitle: "Sobre Mí",
+      consoleTitle: t.aboutMe,
     },
     {
       id: "skills",
-      title: "Skills",
+      title: t.skills,
       bgColor: "bg-purple-800",
       consoleIcon: (
         <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
@@ -53,7 +214,7 @@ export default function Portfolio() {
         </div>
       ),
       consoleBg: "bg-blue-500",
-      consoleTitle: "Skills",
+      consoleTitle: t.skills,
     },
     {
       id: "project1",
@@ -81,26 +242,27 @@ export default function Portfolio() {
       consoleTitle: "LinkerStore",
       consoleTitleColor: "text-blue-600",
     },
-    {
-      id: "project3",
-      title: "Tienda Elizabeth",
-      bgColor: "bg-green-700",
-      consoleIcon: (
-        <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
-          <span className="text-green-600 font-bold text-xs">TE</span>
-        </div>
-      ),
-      consoleBg: "bg-white",
-      consoleTitle: "Elizabeth",
-      consoleTitleColor: "text-green-600",
-    },
+    // Commented out Tienda Elizabeth
+    // {
+    //   id: "project3",
+    //   title: "Tienda Elizabeth",
+    //   bgColor: "bg-green-700",
+    //   consoleIcon: (
+    //     <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
+    //       <span className="text-green-600 font-bold text-xs">TE</span>
+    //     </div>
+    //   ),
+    //   consoleBg: "bg-white",
+    //   consoleTitle: "Elizabeth",
+    //   consoleTitleColor: "text-green-600",
+    // },
     {
       id: "contact",
-      title: "Contacto",
+      title: t.contact,
       bgColor: "bg-gray-900",
       consoleIcon: <Mail className="w-8 h-8 text-white" />,
       consoleBg: "bg-green-400",
-      consoleTitle: "Contacto",
+      consoleTitle: t.contact,
     },
   ]
 
@@ -220,7 +382,7 @@ export default function Portfolio() {
     }, typingSpeed)
 
     return () => clearTimeout(timer)
-  }, [nameIndex, nameIsDeleting, currentSection])
+  }, [nameIndex, nameIsDeleting, currentSection, nameString])
 
   // Typewriter effect for title
   useEffect(() => {
@@ -244,7 +406,18 @@ export default function Portfolio() {
     }, typingSpeed)
 
     return () => clearTimeout(timer)
-  }, [titleIndex, titleIsDeleting, showTitle, currentSection])
+  }, [titleIndex, titleIsDeleting, showTitle, currentSection, titleString])
+
+  // Reset typewriter when language changes
+  useEffect(() => {
+    setNameText("")
+    setTitleText("")
+    setNameIndex(0)
+    setTitleIndex(0)
+    setNameIsDeleting(false)
+    setTitleIsDeleting(false)
+    setShowTitle(false)
+  }, [language])
 
   useEffect(() => {
     const updateTime = () => {
@@ -336,6 +509,40 @@ export default function Portfolio() {
     playSound("success")
   }
 
+  // Update the toggleLanguage function to include the 3D transition
+  const toggleLanguage = () => {
+    playSound("modal")
+    setIsLanguageTransitioning(true)
+
+    // Start transition animation
+    setTimeout(() => {
+      setLanguage((prev) => (prev === "es" ? "en" : "es"))
+    }, 1000) // Change language halfway through animation
+
+    // End transition animation
+    setTimeout(() => {
+      setIsLanguageTransitioning(false)
+      playSound("success")
+    }, 2000)
+  }
+
+  const downloadCV = () => {
+    playSound("success")
+    const cvFile = language === "es" ? "CV_Raul_Vargas_DesarrolloWeb.pdf" : "CV_Raul_Vargas.pdf"
+    // Create a temporary link to download the CV
+    const link = document.createElement("a")
+    link.href = `/${cvFile}`
+    link.download = cvFile
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+  const toggle3DBackground = () => {
+    playSound("button")
+    setShow3DBackground(!show3DBackground)
+  }
+
   const renderCurrentSection = () => {
     const currentSectionData = sections[currentSection]
 
@@ -348,20 +555,22 @@ export default function Portfolio() {
             onContactClick={handleContactClick}
             onViewProjects={scrollToProjects}
             onEnableAudio={handleEnableAudio}
+            onDownloadCV={downloadCV}
             audioEnabled={audioEnabled}
             playSound={playSound}
+            language={language}
           />
         )
       case "skills":
-        return <SkillsSection playSound={playSound} />
+        return <SkillsSection playSound={playSound} language={language} />
       case "project1":
-        return <Project1Section playSound={playSound} />
+        return <Project1Section playSound={playSound} language={language} />
       case "project2":
-        return <Project2Section playSound={playSound} />
-      case "project3":
-        return <Project3Section playSound={playSound} />
+        return <Project2Section playSound={playSound} language={language} />
+      // case "project3":
+      //   return <Project3Section playSound={playSound} language={language} />
       case "contact":
-        return <ContactSection playSound={playSound} />
+        return <ContactSection playSound={playSound} language={language} />
       default:
         return (
           <HomeSection
@@ -370,8 +579,10 @@ export default function Portfolio() {
             onContactClick={handleContactClick}
             onViewProjects={scrollToProjects}
             onEnableAudio={handleEnableAudio}
+            onDownloadCV={downloadCV}
             audioEnabled={audioEnabled}
             playSound={playSound}
+            language={language}
           />
         )
     }
@@ -379,8 +590,37 @@ export default function Portfolio() {
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
-      {/* Matrix Background - Only for home section */}
-      {currentSection === 0 && <div id="matrix-bg" className="matrix-bg"></div>}
+      {/* 3D Background */}
+      {show3DBackground && (
+        <Suspense fallback={null}>
+          <Background3D />
+        </Suspense>
+      )}
+
+      {/* Language Toggle Button */}
+      <button
+        onClick={toggleLanguage}
+        disabled={isLanguageTransitioning}
+        className={`fixed top-4 left-4 z-50 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-bold transition-all enhanced-button border-2 border-purple-400 flex items-center space-x-2 language-button ${
+          isLanguageTransitioning ? "language-switching opacity-75 cursor-not-allowed" : ""
+        }`}
+        style={{ fontFamily: '"Press Start 2P", monospace', fontSize: "8px" }}
+      >
+        <Globe className={`w-4 h-4 ${isLanguageTransitioning ? "animate-spin" : ""}`} />
+        <span>{language === "es" ? "English Version" : "Versión Español"}</span>
+      </button>
+
+      {/* 3D Toggle Button */}
+      <button
+        onClick={toggle3DBackground}
+        className="fixed top-4 right-4 z-50 bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-lg font-bold transition-all enhanced-button border-2 border-cyan-400 flex items-center space-x-2"
+        style={{ fontFamily: '"Press Start 2P", monospace', fontSize: "8px" }}
+      >
+        <span>{show3DBackground ? "🎮 3D ON" : "🎮 3D OFF"}</span>
+      </button>
+
+      {/* Matrix Background - Only for home section when 3D is off */}
+      {currentSection === 0 && !show3DBackground && <div id="matrix-bg" className="matrix-bg"></div>}
 
       {/* Current Section */}
       <div className={`min-h-screen ${sections[currentSection].bgColor} relative z-10 transition-all duration-500`}>
@@ -393,14 +633,22 @@ export default function Portfolio() {
 
               {/* Right Side - Console */}
               <div className="flex justify-center animate-slide-in-right">
-                <div className="console-enhanced">
-                  <Console
-                    currentSection={currentSection}
-                    sections={sections}
-                    currentTime={currentTime}
-                    onNavigate={navigateSection}
-                    playSound={playSound}
-                  />
+                <div className="console-enhanced relative">
+                  {show3DBackground && currentSection === 0 ? (
+                    <Suspense fallback={<div className="w-80 h-80 bg-gray-800 rounded-3xl animate-pulse" />}>
+                      <div className="w-80 h-80">
+                        <Console3DView isActive={true} />
+                      </div>
+                    </Suspense>
+                  ) : (
+                    <Console
+                      currentSection={currentSection}
+                      sections={sections}
+                      currentTime={currentTime}
+                      onNavigate={navigateSection}
+                      playSound={playSound}
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -431,12 +679,28 @@ export default function Portfolio() {
       {/* Projects Summary Section */}
       {showProjects && (
         <div ref={projectsRef} className="bg-gray-900 py-16 relative z-10 animate-slide-in-up">
-          <ProjectsSummary playSound={playSound} />
+          <ProjectsSummary playSound={playSound} language={language} />
         </div>
       )}
 
       {/* Contact Modal */}
-      {showContactModal && <ContactModal onClose={handleCloseModal} playSound={playSound} />}
+      {showContactModal && <ContactModal onClose={handleCloseModal} playSound={playSound} language={language} />}
+
+      {/* 3D Language Transition */}
+      {isLanguageTransitioning && (
+        <Suspense fallback={null}>
+          <Transition3D isVisible={isLanguageTransitioning} text={t.switchingLanguage} />
+        </Suspense>
+      )}
+
+      {/* Skills 3D View */}
+      {currentSection === 1 && show3DBackground && (
+        <div className="fixed top-0 right-0 w-1/3 h-full z-5 pointer-events-none">
+          <Suspense fallback={null}>
+            <TechIcons3D />
+          </Suspense>
+        </div>
+      )}
     </div>
   )
 }
@@ -564,17 +828,23 @@ function HomeSection({
   onContactClick,
   onViewProjects,
   onEnableAudio,
+  onDownloadCV,
   audioEnabled,
   playSound,
+  language,
 }: {
   nameText: string
   titleText: string
   onContactClick: () => void
   onViewProjects: () => void
   onEnableAudio: () => void
+  onDownloadCV: () => void
   audioEnabled: boolean
   playSound: (type: string) => void
+  language: "es" | "en"
 }) {
+  const t = content[language]
+
   const handleTechClick = (techName: string) => {
     playSound("click")
   }
@@ -610,15 +880,16 @@ function HomeSection({
               className="text-purple-400 text-sm lg:text-base font-bold mb-3"
               style={{ fontFamily: '"Press Start 2P", monospace' }}
             >
-              PERFIL PROFESIONAL
+              {t.professionalProfile}
             </h3>
             <p
               className="text-xs lg:text-sm font-medium text-gray-300 leading-relaxed"
               style={{ fontFamily: "Montserrat, sans-serif" }}
             >
-              <strong>Ingeniero en Tecnologías de la Información</strong> con experiencia en desarrollo web y
-              aplicaciones empresariales. Experto en React, JavaScript, Java Spring Boot, PHP y .NET. Proactivo,
-              adaptable y orientado a resultados.
+              <strong>
+                {language === "es" ? "Ingeniero en Tecnologías de la Información" : "Information Technology Engineer"}
+              </strong>{" "}
+              {t.profileDescription}
             </p>
           </div>
 
@@ -629,16 +900,16 @@ function HomeSection({
                 className="text-green-400 text-xs font-bold mb-2"
                 style={{ fontFamily: '"Press Start 2P", monospace' }}
               >
-                EXPERIENCIA RECIENTE
+                {t.recentExperience}
               </h4>
               <div className="space-y-2 text-xs" style={{ fontFamily: "Montserrat, sans-serif" }}>
                 <div className="text-white">
-                  <strong>Desarrollador Web Jr</strong> - ALBA DTI
-                  <div className="text-gray-400">Feb 2025 - Jul 2025</div>
+                  <strong>{t.webDevJr}</strong> - {t.albaDti}
+                  <div className="text-gray-400">{t.febJul2025}</div>
                 </div>
                 <div className="text-white">
-                  <strong>Desarrollador Web</strong> - Shift F6
-                  <div className="text-gray-400">Ene 2025 - Feb 2025</div>
+                  <strong>{t.webDev}</strong> - {t.shiftF6}
+                  <div className="text-gray-400">{t.janFeb2025}</div>
                 </div>
               </div>
             </div>
@@ -648,15 +919,15 @@ function HomeSection({
                 className="text-blue-400 text-xs font-bold mb-2"
                 style={{ fontFamily: '"Press Start 2P", monospace' }}
               >
-                EDUCACIÓN & CERTS
+                {t.educationCerts}
               </h4>
               <div className="space-y-1 text-xs" style={{ fontFamily: "Montserrat, sans-serif" }}>
                 <div className="text-white">
-                  <strong>Ing. en TI</strong> - UPTx (2021-2024)
+                  <strong>{t.engineeringIT}</strong> - {t.uptx}
                 </div>
-                <div className="text-gray-400">• Diplomado FullStack - Coderfy</div>
-                <div className="text-gray-400">• TOEFL ITP B2</div>
-                <div className="text-gray-400">• Cisco Networking Academy</div>
+                <div className="text-gray-400">{t.diplomaFullStack}</div>
+                <div className="text-gray-400">{t.toeflB2}</div>
+                <div className="text-gray-400">{t.ciscoAcademy}</div>
               </div>
             </div>
           </div>
@@ -667,7 +938,7 @@ function HomeSection({
               className="text-orange-400 text-xs font-bold mb-3"
               style={{ fontFamily: '"Press Start 2P", monospace' }}
             >
-              STACK TECNOLÓGICO
+              {t.techStack}
             </h4>
             <div className="grid grid-cols-3 lg:grid-cols-5 gap-3">
               {[
@@ -863,7 +1134,7 @@ function HomeSection({
               className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg font-bold transition-colors enhanced-button border-2 border-yellow-400 text-xs"
               style={{ fontFamily: '"Press Start 2P", monospace', fontSize: "8px" }}
             >
-              🔊 ACTIVAR SONIDOS
+              {t.enableSounds}
             </button>
           </div>
         )}
@@ -875,14 +1146,22 @@ function HomeSection({
             className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-bold transition-all enhanced-button border-2 border-orange-300"
             style={{ fontFamily: '"Press Start 2P", monospace', fontSize: "10px" }}
           >
-            Ver Proyectos
+            {t.viewProjects}
           </button>
           <button
             onClick={onContactClick}
             className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-lg font-bold transition-all enhanced-button shadow-lg border-4 border-purple-400"
             style={{ fontFamily: '"Press Start 2P", monospace', fontSize: "14px" }}
           >
-            CONTACTAR
+            {t.contact}
+          </button>
+          <button
+            onClick={onDownloadCV}
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-bold transition-all enhanced-button border-2 border-green-400 flex items-center space-x-2"
+            style={{ fontFamily: '"Press Start 2P", monospace', fontSize: "10px" }}
+          >
+            <Download className="w-4 h-4" />
+            <span>{t.downloadCV}</span>
           </button>
         </div>
 
@@ -890,7 +1169,7 @@ function HomeSection({
         {audioEnabled && (
           <div className="text-center lg:text-left animate-slide-in-up">
             <p className="text-xs text-gray-500" style={{ fontFamily: "Montserrat, sans-serif" }}>
-              💡 Haz clic en cualquier elemento para escuchar efectos de sonido retro
+              {t.soundsHint}
             </p>
           </div>
         )}
@@ -899,7 +1178,9 @@ function HomeSection({
   )
 }
 
-function SkillsSection({ playSound }: { playSound: (type: string) => void }) {
+function SkillsSection({ playSound, language }: { playSound: (type: string) => void; language: "es" | "en" }) {
+  const t = content[language]
+
   const skills = [
     {
       name: "Java",
@@ -1042,7 +1323,7 @@ function SkillsSection({ playSound }: { playSound: (type: string) => void }) {
         className="text-3xl lg:text-5xl font-bold text-white mb-8 lg:mb-12 animate-bounce-in"
         style={{ fontFamily: '"Press Start 2P", monospace' }}
       >
-        Skills
+        {t.skills}
       </h1>
 
       <div className="grid grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6">
@@ -1097,7 +1378,9 @@ function SkillsSection({ playSound }: { playSound: (type: string) => void }) {
   )
 }
 
-function Project1Section({ playSound }: { playSound: (type: string) => void }) {
+function Project1Section({ playSound, language }: { playSound: (type: string) => void; language: "es" | "en" }) {
+  const t = content[language]
+
   const handleProjectClick = () => {
     playSound("button")
   }
@@ -1128,9 +1411,7 @@ function Project1Section({ playSound }: { playSound: (type: string) => void }) {
           className="text-white text-sm lg:text-lg font-bold leading-relaxed"
           style={{ fontFamily: "Montserrat, sans-serif" }}
         >
-          Plataforma en desarrollo para conectar empresas con freelancers de manera fácil y rápida. Mantiene seguridad
-          de pago y genera mayor confianza para las empresas, facilitando la conexión entre freelancers y proyectos
-          empresariales.
+          {t.linkerProDesc}
         </p>
 
         {/* Technologies */}
@@ -1148,21 +1429,23 @@ function Project1Section({ playSound }: { playSound: (type: string) => void }) {
 
         {/* Button */}
         <a
-          href="https://v0-linker-pro-platform-pr4k2trv8-raulgrants-projects.vercel.app"
+          href="https://v0-linker-pro-platform.vercel.app/"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-block border-2 border-blue-200 bg-blue-100 text-blue-800 px-6 py-3 rounded-full font-bold transition-all enhanced-button"
           style={{ fontFamily: '"Press Start 2P", monospace', fontSize: "10px" }}
           onClick={handleProjectClick}
         >
-          Ver LinkerPro
+          {t.viewLinkerPro}
         </a>
       </div>
     </div>
   )
 }
 
-function Project2Section({ playSound }: { playSound: (type: string) => void }) {
+function Project2Section({ playSound, language }: { playSound: (type: string) => void; language: "es" | "en" }) {
+  const t = content[language]
+
   const handleProjectClick = () => {
     playSound("button")
   }
@@ -1193,8 +1476,7 @@ function Project2Section({ playSound }: { playSound: (type: string) => void }) {
           className="text-white text-sm lg:text-lg font-bold leading-relaxed"
           style={{ fontFamily: "Montserrat, sans-serif" }}
         >
-          Plataforma e-commerce con afiliados de Amazon y Mercado Libre. Incluye un blog con los mejores artículos
-          industriales. Aún en construcción, pero con buen desempeño hasta el momento.
+          {t.linkerStoreDesc}
         </p>
 
         {/* Technologies */}
@@ -1212,113 +1494,118 @@ function Project2Section({ playSound }: { playSound: (type: string) => void }) {
 
         {/* Button */}
         <a
-          href="https://linkerstore2-khb2wm91f-raulgrants-projects.vercel.app"
+          href="https://linkerstore.vercel.app"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-block border-2 border-orange-200 bg-orange-100 text-orange-800 px-6 py-3 rounded-full font-bold transition-all enhanced-button"
           style={{ fontFamily: '"Press Start 2P", monospace', fontSize: "10px" }}
           onClick={handleProjectClick}
         >
-          Ver LinkerStore
+          {t.viewLinkerStore}
         </a>
       </div>
     </div>
   )
 }
 
-function Project3Section({ playSound }: { playSound: (type: string) => void }) {
-  const handleProjectClick = () => {
-    playSound("button")
-  }
+// Commented out Tienda Elizabeth section
+// function Project3Section({ playSound, language }: { playSound: (type: string) => void; language: 'es' | 'en' }) {
+//   const t = content[language]
 
-  return (
-    <div className="space-y-6 lg:space-y-8 px-4 lg:px-0">
-      {/* Logo */}
-      <div className="mb-6 lg:mb-8">
-        <div
-          className="text-white text-4xl lg:text-6xl font-bold"
-          style={{ fontFamily: '"Press Start 2P", monospace' }}
-        >
-          <div className="flex items-center space-x-2">
-            <div className="w-12 h-12 lg:w-16 lg:h-16 bg-white rounded-full flex items-center justify-center pixel-border">
-              <span className="text-green-600 text-xl lg:text-2xl">🏪</span>
-            </div>
-            <div>
-              <div className="text-2xl lg:text-4xl">TIENDA</div>
-              <div className="text-lg lg:text-2xl">ELIZABETH</div>
-            </div>
-          </div>
-        </div>
-      </div>
+//   const handleProjectClick = () => {
+//     playSound("button")
+//   }
 
-      {/* Description */}
-      <div className="space-y-4 lg:space-y-6">
-        <p
-          className="text-white text-sm lg:text-lg font-bold leading-relaxed"
-          style={{ fontFamily: "Montserrat, sans-serif" }}
-        >
-          Sistema de control de inventarios para tienda de abarrotes local. Frontend desarrollado con Angular Standalone
-          y Next.js, alojado en Hostinger con backend en Railway.
-        </p>
+//   return (
+//     <div className="space-y-6 lg:space-y-8 px-4 lg:px-0">
+//       {/* Logo */}
+//       <div className="mb-6 lg:mb-8">
+//         <div
+//           className="text-white text-4xl lg:text-6xl font-bold"
+//           style={{ fontFamily: '"Press Start 2P", monospace' }}
+//         >
+//           <div className="flex items-center space-x-2">
+//             <div className="w-12 h-12 lg:w-16 lg:h-16 bg-white rounded-full flex items-center justify-center pixel-border">
+//               <span className="text-green-600 text-xl lg:text-2xl">🏪</span>
+//             </div>
+//             <div>
+//               <div className="text-2xl lg:text-4xl">TIENDA</div>
+//               <div className="text-lg lg:text-2xl">ELIZABETH</div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
 
-        {/* Technologies */}
-        <div className="flex space-x-4 lg:space-x-6">
-          <div className="w-8 h-8 lg:w-10 lg:h-10 bg-white rounded flex items-center justify-center text-2xl pixel-border">
-            <span className="text-red-600 font-bold text-xs lg:text-sm">A</span>
-          </div>
-          <div className="w-8 h-8 lg:w-10 lg:h-10 bg-white rounded flex items-center justify-center text-2xl pixel-border">
-            <span className="text-black font-bold text-xs lg:text-sm">N</span>
-          </div>
-          <div className="w-8 h-8 lg:w-10 lg:h-10 bg-white rounded flex items-center justify-center text-2xl pixel-border">
-            <span className="text-blue-700 font-bold text-xs lg:text-sm">TS</span>
-          </div>
-        </div>
+//       {/* Description */}
+//       <div className="space-y-4 lg:space-y-6">
+//         <p
+//           className="text-white text-sm lg:text-lg font-bold leading-relaxed"
+//           style={{ fontFamily: "Montserrat, sans-serif" }}
+//         >
+//           Sistema de control de inventarios para tienda de abarrotes local. Frontend desarrollado con Angular Standalone
+//           y Next.js, alojado en Hostinger con backend en Railway.
+//         </p>
 
-        {/* Button */}
-        <a
-          href="https://tienda-elizabeth.pro"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block border-2 border-green-200 bg-green-100 text-green-800 px-6 py-3 rounded-full font-bold transition-all enhanced-button"
-          style={{ fontFamily: '"Press Start 2P", monospace', fontSize: "10px" }}
-          onClick={handleProjectClick}
-        >
-          Ver Tienda Elizabeth
-        </a>
-      </div>
-    </div>
-  )
-}
+//         {/* Technologies */}
+//         <div className="flex space-x-4 lg:space-x-6">
+//           <div className="w-8 h-8 lg:w-10 lg:h-10 bg-white rounded flex items-center justify-center text-2xl pixel-border">
+//             <span className="text-red-600 font-bold text-xs lg:text-sm">A</span>
+//           </div>
+//           <div className="w-8 h-8 lg:w-10 lg:h-10 bg-white rounded flex items-center justify-center text-2xl pixel-border">
+//             <span className="text-black font-bold text-xs lg:text-sm">N</span>
+//           </div>
+//           <div className="w-8 h-8 lg:w-10 lg:h-10 bg-white rounded flex items-center justify-center text-2xl pixel-border">
+//             <span className="text-blue-700 font-bold text-xs lg:text-sm">TS</span>
+//           </div>
+//         </div>
 
-function ContactSection({ playSound }: { playSound: (type: string) => void }) {
+//         {/* Button */}
+//         <a
+//           href="https://tienda-elizabeth.pro"
+//           target="_blank"
+//           rel="noopener noreferrer"
+//           className="inline-block border-2 border-green-200 bg-green-100 text-green-800 px-6 py-3 rounded-full font-bold transition-all enhanced-button"
+//           style={{ fontFamily: '"Press Start 2P", monospace', fontSize: "10px" }}
+//           onClick={handleProjectClick}
+//         >
+//           Ver Tienda Elizabeth
+//         </a>
+//       </div>
+//     </div>
+//   )
+// }
+
+function ContactSection({ playSound, language }: { playSound: (type: string) => void; language: "es" | "en" }) {
+  const t = content[language]
+
   const contacts = [
     {
       name: "WhatsApp",
       icon: "💬",
       color: "bg-green-600 hover:bg-green-700",
       url: "https://wa.me/522462387622",
-      description: "Envíame un mensaje directo",
+      description: t.whatsappDesc,
     },
     {
       name: "Gmail",
       icon: "📧",
       color: "bg-red-600 hover:bg-red-700",
       url: "mailto:vqrgashernandezrauldejesus@gmail.com",
-      description: "Correo profesional",
+      description: t.gmailDesc,
     },
     {
       name: "GitHub",
       icon: "🐙",
       color: "bg-gray-800 hover:bg-gray-900",
       url: "https://github.com/RaulGrant",
-      description: "Revisa mis repositorios",
+      description: t.githubDesc,
     },
     {
       name: "LinkedIn",
       icon: "💼",
       color: "bg-blue-600 hover:bg-blue-700",
       url: "https://linkedin.com/in/raul-de-jesus-vargas-hernandez-74g",
-      description: "Conectemos profesionalmente",
+      description: t.linkedinDesc,
     },
   ]
 
@@ -1332,7 +1619,7 @@ function ContactSection({ playSound }: { playSound: (type: string) => void }) {
         className="text-3xl lg:text-5xl font-bold text-white mb-8 lg:mb-12 animate-bounce-in"
         style={{ fontFamily: '"Press Start 2P", monospace' }}
       >
-        Contacto
+        {t.contact}
       </h1>
 
       <div className="space-y-6 lg:space-y-8">
@@ -1342,23 +1629,23 @@ function ContactSection({ playSound }: { playSound: (type: string) => void }) {
             className="text-purple-400 text-sm lg:text-base font-bold mb-3"
             style={{ fontFamily: '"Press Start 2P", monospace' }}
           >
-            ¡HABLEMOS!
+            {t.contactTitle}
           </h3>
           <p
             className="text-white text-sm lg:text-lg font-bold leading-relaxed mb-4"
             style={{ fontFamily: "Montserrat, sans-serif" }}
           >
-            ¿Tienes un proyecto en mente? ¡Estoy disponible para colaborar en proyectos interesantes y desafiantes!
+            {t.contactDescription}
           </p>
           <div className="space-y-2 text-sm" style={{ fontFamily: "Montserrat, sans-serif" }}>
             <div className="text-gray-300">
-              <strong>📍 Ubicación:</strong> Tlaxcala / Hidalgo, México
+              <strong>{t.location}</strong>
             </div>
             <div className="text-gray-300">
-              <strong>📞 Teléfono:</strong> +52 246-238-76-22
+              <strong>{t.phone}</strong>
             </div>
             <div className="text-gray-300">
-              <strong>🌍 Disponibilidad:</strong> Disponible para reubicación
+              <strong>{t.availability}</strong>
             </div>
           </div>
         </div>
@@ -1394,10 +1681,10 @@ function ContactSection({ playSound }: { playSound: (type: string) => void }) {
         {/* Additional Info */}
         <div className="glow-card rounded-lg p-4 animate-slide-in-up">
           <h4 className="text-orange-400 text-xs font-bold mb-2" style={{ fontFamily: '"Press Start 2P", monospace' }}>
-            TIEMPO DE RESPUESTA
+            {t.responseTime}
           </h4>
           <p className="text-gray-300 text-sm" style={{ fontFamily: "Montserrat, sans-serif" }}>
-            Generalmente respondo en menos de 24 horas. Para proyectos urgentes, WhatsApp es la mejor opción.
+            {t.responseTimeDesc}
           </p>
         </div>
       </div>
@@ -1405,7 +1692,13 @@ function ContactSection({ playSound }: { playSound: (type: string) => void }) {
   )
 }
 
-function ContactModal({ onClose, playSound }: { onClose: () => void; playSound: (type: string) => void }) {
+function ContactModal({
+  onClose,
+  playSound,
+  language,
+}: { onClose: () => void; playSound: (type: string) => void; language: "es" | "en" }) {
+  const t = content[language]
+
   const contacts = [
     {
       name: "WhatsApp",
@@ -1446,7 +1739,7 @@ function ContactModal({ onClose, playSound }: { onClose: () => void; playSound: 
             className="text-xl lg:text-2xl font-bold text-white"
             style={{ fontFamily: '"Press Start 2P", monospace' }}
           >
-            CONTACTO
+            {t.contact.toUpperCase()}
           </h2>
           <button
             onClick={onClose}
@@ -1486,7 +1779,7 @@ function ContactModal({ onClose, playSound }: { onClose: () => void; playSound: 
             className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-2 rounded font-bold pixel-button border-2 border-gray-500"
             style={{ fontFamily: '"Press Start 2P", monospace', fontSize: "10px" }}
           >
-            CERRAR
+            {t.close}
           </button>
         </div>
       </div>
@@ -1494,32 +1787,35 @@ function ContactModal({ onClose, playSound }: { onClose: () => void; playSound: 
   )
 }
 
-function ProjectsSummary({ playSound }: { playSound: (type: string) => void }) {
+function ProjectsSummary({ playSound, language }: { playSound: (type: string) => void; language: "es" | "en" }) {
+  const t = content[language]
+
   const projects = [
     {
       name: "LinkerPro",
-      description: "Plataforma para conectar empresas con freelancers",
+      description: t.linkerProSummary,
       technologies: ["React", "TypeScript", "Supabase"],
       color: "bg-blue-600",
       logo: "🔗",
-      url: "https://v0-linker-pro-platform-pr4k2trv8-raulgrants-projects.vercel.app",
+      url: "https://v0-linker-pro-platform.vercel.app/",
     },
     {
       name: "LinkerStore",
-      description: "E-commerce con afiliados Amazon y Mercado Libre",
+      description: t.linkerStoreSummary,
       technologies: ["React", "TypeScript", "Supabase"],
       color: "bg-orange-600",
       logo: "🛒",
-      url: "https://linkerstore2-khb2wm91f-raulgrants-projects.vercel.app",
+      url: "https://linkerstore.vercel.app",
     },
-    {
-      name: "Tienda Elizabeth",
-      description: "Control de inventarios para tienda de abarrotes",
-      technologies: ["Angular", "Next.js", "TypeScript"],
-      color: "bg-green-600",
-      logo: "🏪",
-      url: "https://tienda-elizabeth.pro",
-    },
+    // Commented out Tienda Elizabeth
+    // {
+    //   name: "Tienda Elizabeth",
+    //   description: "Control de inventarios para tienda de abarrotes",
+    //   technologies: ["Angular", "Next.js", "TypeScript"],
+    //   color: "bg-green-600",
+    //   logo: "🏪",
+    //   url: "https://tienda-elizabeth.pro",
+    // },
   ]
 
   const handleProjectClick = () => {
@@ -1532,10 +1828,10 @@ function ProjectsSummary({ playSound }: { playSound: (type: string) => void }) {
         className="text-3xl lg:text-4xl font-bold text-white text-center mb-12"
         style={{ fontFamily: '"Press Start 2P", monospace' }}
       >
-        Mis Proyectos
+        {t.projects}
       </h2>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {projects.map((project, index) => (
           <div key={index} className={`${project.color} rounded-lg p-6 text-white pixel-border`}>
             <div className="flex items-center space-x-4 mb-4">
@@ -1571,10 +1867,70 @@ function ProjectsSummary({ playSound }: { playSound: (type: string) => void }) {
               style={{ fontFamily: '"Press Start 2P", monospace', fontSize: "8px" }}
               onClick={handleProjectClick}
             >
-              <span>Ver Proyecto</span>
+              <span>{t.viewProject}</span>
               <ExternalLink className="w-3 h-3" />
             </a>
           </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// Add the LanguageTransition component after the ProjectsSummary function
+function LanguageTransition() {
+  const t = content[language] // Assuming language is accessible here or passed as prop
+
+  return (
+    <div className="fixed inset-0 z-[100] bg-black flex items-center justify-center language-transition-overlay">
+      {/* Matrix-style transition effect */}
+      <div className="absolute inset-0 overflow-hidden">
+        {Array.from({ length: 50 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute text-green-400 font-mono text-sm opacity-70 animate-matrix-fall"
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 2}s`,
+              animationDuration: `${1 + Math.random()}s`,
+            }}
+          >
+            {Math.random() > 0.5 ? "01" : "ES/EN"}
+          </div>
+        ))}
+      </div>
+
+      {/* Central loading indicator */}
+      <div className="relative z-10 text-center">
+        <div className="w-20 h-20 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <div
+          className="text-white text-lg font-bold animate-pulse"
+          style={{ fontFamily: '"Press Start 2P", monospace' }}
+        >
+          {t.switchingLanguage}
+        </div>
+        <div className="mt-4 flex justify-center space-x-2">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div
+              key={i}
+              className="w-3 h-3 bg-purple-500 rounded-full animate-bounce"
+              style={{ animationDelay: `${i * 0.2}s` }}
+            ></div>
+          ))}
+        </div>
+      </div>
+
+      {/* Glitch effect lines */}
+      <div className="absolute inset-0 pointer-events-none">
+        {Array.from({ length: 10 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent animate-glitch-line"
+            style={{
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 1}s`,
+            }}
+          ></div>
         ))}
       </div>
     </div>

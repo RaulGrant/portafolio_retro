@@ -127,7 +127,10 @@ interface Transition3DProps {
 }
 
 export default function Transition3D({ isVisible, text }: Transition3DProps) {
-  if (!isVisible) return null
+  // Only render on client side
+  if (typeof window === "undefined" || !isVisible) {
+    return null
+  }
 
   return (
     <div className="fixed inset-0 z-[100] pointer-events-none">

@@ -114,6 +114,11 @@ function TechConstellation() {
 }
 
 export default function TechIcons3D() {
+  // Only render on client side
+  if (typeof window === "undefined") {
+    return <div className="w-full h-full bg-gray-900 rounded-lg animate-pulse" />
+  }
+
   return (
     <div className="w-full h-full">
       <Canvas camera={{ position: [0, 0, 5], fov: 60 }} style={{ background: "transparent" }}>

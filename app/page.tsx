@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef, Suspense } from "react"
+import dynamic from "next/dynamic"
 import {
   ChevronUp,
   ChevronDown,
@@ -15,10 +16,27 @@ import {
   Download,
   Globe,
 } from "lucide-react"
-import Background3D from "@/components/3d-background"
-import Transition3D from "@/components/3d-transition"
-import Console3DView from "@/components/3d-console"
-import TechIcons3D from "@/components/3d-tech-icons"
+
+// Dynamic imports for 3D components to avoid SSR issues
+const Background3D = dynamic(() => import("@/components/3d-background"), {
+  ssr: false,
+  loading: () => null,
+})
+
+const Transition3D = dynamic(() => import("@/components/3d-transition"), {
+  ssr: false,
+  loading: () => null,
+})
+
+const Console3DView = dynamic(() => import("@/components/3d-console"), {
+  ssr: false,
+  loading: () => null,
+})
+
+const TechIcons3D = dynamic(() => import("@/components/3d-tech-icons"), {
+  ssr: false,
+  loading: () => null,
+})
 
 // Language content
 const content = {
@@ -89,7 +107,7 @@ const content = {
 
     // Projects summary
     linkerProSummary: "Plataforma para conectar empresas con freelancers",
-    linkerStoreSummary: "E-commerce con afiliados Amazon y Mercado Libre",
+    linkerStoreSummary: "E-commerce con Amazon y Mercado Libre afiliados",
     viewProject: "Ver Proyecto",
 
     // 3D Transition
@@ -268,6 +286,7 @@ export default function Portfolio() {
 
   // Initialize audio context
   const initAudio = () => {
+    if (typeof window === "undefined") return
     if (!audioContextRef.current) {
       audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
     }
@@ -276,7 +295,7 @@ export default function Portfolio() {
 
   // Create retro sound effects
   const playSound = (type: "hover" | "click" | "push" | "button" | "navigation" | "modal" | "success" | "error") => {
-    if (!audioEnabled || !audioContextRef.current) return
+    if (typeof window === "undefined" || !audioEnabled || !audioContextRef.current) return
 
     const audioContext = audioContextRef.current
     const oscillator = audioContext.createOscillator()
@@ -438,42 +457,42 @@ export default function Portfolio() {
 
   useEffect(() => {
     // Matrix-style background animation for home section
-    if (currentSection === 0) {
-      const matrixContainer = document.getElementById("matrix-bg")
-      if (matrixContainer) {
-        // Clear existing characters
-        matrixContainer.innerHTML = ""
+    if (typeof window === "undefined" || currentSection !== 0) return
 
-        const characters =
-          "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン"
-        const columns = Math.floor(window.innerWidth / 20)
+    const matrixContainer = document.getElementById("matrix-bg")
+    if (matrixContainer) {
+      // Clear existing characters
+      matrixContainer.innerHTML = ""
 
-        for (let i = 0; i < columns; i++) {
-          const char = document.createElement("div")
-          char.className = "matrix-char"
-          char.textContent = characters[Math.floor(Math.random() * characters.length)]
-          char.style.left = `${i * 20}px`
-          char.style.animationDelay = `${Math.random() * 3}s`
-          char.style.animationDuration = `${3 + Math.random() * 2}s`
-          matrixContainer.appendChild(char)
-        }
+      const characters =
+        "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン"
+      const columns = Math.floor(window.innerWidth / 20)
 
-        // Add continuous character generation
-        const interval = setInterval(() => {
-          if (currentSection === 0) {
-            const chars = matrixContainer.querySelectorAll(".matrix-char")
-            chars.forEach((char) => {
-              if (Math.random() > 0.98) {
-                char.textContent = characters[Math.floor(Math.random() * characters.length)]
-              }
-            })
-          } else {
-            clearInterval(interval)
-          }
-        }, 100)
-
-        return () => clearInterval(interval)
+      for (let i = 0; i < columns; i++) {
+        const char = document.createElement("div")
+        char.className = "matrix-char"
+        char.textContent = characters[Math.floor(Math.random() * characters.length)]
+        char.style.left = `${i * 20}px`
+        char.style.animationDelay = `${Math.random() * 3}s`
+        char.style.animationDuration = `${3 + Math.random() * 2}s`
+        matrixContainer.appendChild(char)
       }
+
+      // Add continuous character generation
+      const interval = setInterval(() => {
+        if (currentSection === 0) {
+          const chars = matrixContainer.querySelectorAll(".matrix-char")
+          chars.forEach((char) => {
+            if (Math.random() > 0.98) {
+              char.textContent = characters[Math.floor(Math.random() * characters.length)]
+            }
+          })
+        } else {
+          clearInterval(interval)
+        }
+      }, 100)
+
+      return () => clearInterval(interval)
     }
   }, [currentSection])
 

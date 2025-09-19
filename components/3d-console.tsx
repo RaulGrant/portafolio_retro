@@ -58,7 +58,6 @@ function Console3D({ isActive }: { isActive: boolean }) {
       {/* Holographic Text */}
       <Text position={[0, 0.1, 0.2]} fontSize={0.1} color="#00ff41" anchorX="center" anchorY="middle">
         RETRO CONSOLE
-        <meshBasicMaterial transparent opacity={isActive ? 1 : 0.5} />
       </Text>
     </group>
   )
@@ -86,6 +85,11 @@ interface Console3DViewProps {
 }
 
 export default function Console3DView({ isActive = false }: Console3DViewProps) {
+  // Only render on client side
+  if (typeof window === "undefined") {
+    return <div className="w-full h-full bg-gray-800 rounded-3xl animate-pulse" />
+  }
+
   return (
     <div className="w-full h-full">
       <Canvas camera={{ position: [0, 0, 3], fov: 60 }} style={{ background: "transparent" }}>

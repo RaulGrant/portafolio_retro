@@ -109,6 +109,11 @@ function MatrixGrid() {
 }
 
 export default function Background3D() {
+  // Only render on client side
+  if (typeof window === "undefined") {
+    return null
+  }
+
   return (
     <div className="fixed inset-0 z-0">
       <Canvas camera={{ position: [0, 0, 10], fov: 60 }} style={{ background: "transparent" }}>

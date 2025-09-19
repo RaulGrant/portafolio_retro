@@ -562,7 +562,7 @@ export default function Portfolio() {
       {/* Language Toggle Button */}
       <button
         onClick={toggleLanguage}
-        className="fixed top-4 left-4 z-50 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-bold transition-all enhanced-button border-2 border-purple-400 flex items-center space-x-2"
+        className="fixed top-4 right-4 z-50 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-bold transition-all enhanced-button border-2 border-purple-400 flex items-center space-x-2"
         style={{ fontFamily: '"Press Start 2P", monospace', fontSize: "8px" }}
       >
         <Globe className="w-4 h-4" />

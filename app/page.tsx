@@ -30,7 +30,7 @@ const content = {
     title: "Desarrollador Full Stack",
     professionalProfile: "PERFIL PROFESIONAL",
     profileDescription:
-      "Ingeniero en Tecnologías de la Información con experiencia en desarrollo web y aplicaciones empresariales. Experto en React, JavaScript, Java Spring Boot, PHP y .NET. Proactivo, adaptable y orientado a resultados.",
+      "Ingeniero en Tecnologías de la Información con experiencia en desarrollo web y aplicaciones empresariales. Experto en React, JavaScript,TypeScript, Java Spring Boot, PHP, .NET y Java. Proactivo, adaptable y orientado a resultados.",
     recentExperience: "EXPERIENCIA RECIENTE",
     educationCerts: "EDUCACIÓN & CERTS",
     techStack: "STACK TECNOLÓGICO",
@@ -67,7 +67,7 @@ const content = {
     contactTitle: "¡HABLEMOS!",
     contactDescription:
       "¿Tienes un proyecto en mente? ¡Estoy disponible para colaborar en proyectos interesantes y desafiantes!",
-    location: "📍 Ubicación: Tlaxcala / Hidalgo, México",
+    location: "📍 Ubicación: Tlaxcala / Coyoacán CDMX, México",
     phone: "📞 Teléfono: +52 246-238-76-22",
     availability: "🌍 Disponibilidad: Disponible para reubicación",
     responseTime: "TIEMPO DE RESPUESTA",
@@ -100,7 +100,7 @@ const content = {
     title: "Full Stack Developer",
     professionalProfile: "PROFESSIONAL PROFILE",
     profileDescription:
-      "Results-driven Information Technology Engineer with experience in web development and business applications. Expert in React, JavaScript, Java Spring Boot, PHP and .NET. Proactive, adaptable and results-oriented.",
+      "Results-driven Information Technology Engineer with experience in web development and business applications. Expert in React, JavaScript, TypeScript, Java Spring Boot, PHP, .NET and Java. Proactive, adaptable and results-oriented.",
     recentExperience: "RECENT EXPERIENCE",
     educationCerts: "EDUCATION & CERTS",
     techStack: "TECH STACK",
@@ -137,7 +137,7 @@ const content = {
     contactTitle: "LET'S TALK!",
     contactDescription:
       "Do you have a project in mind? I'm available to collaborate on interesting and challenging projects!",
-    location: "📍 Location: Tlaxcala / Hidalgo, Mexico",
+    location: "📍 Location: Tlaxcala / Coyoacan CDMX, Mexico",
     phone: "📞 Phone: +52 246-238-76-22",
     availability: "🌍 Availability: Available for relocation",
     responseTime: "RESPONSE TIME",
@@ -431,7 +431,7 @@ export default function Portfolio() {
         matrixContainer.innerHTML = ""
 
         const characters =
-          "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン"
+          "01 0 1 0 1 0 1 If Else function var let const return for while do switch case break continue try catch throw new class extends super this true false null undefined NaN Infinity console log error warn info debug table time timeEnd clear setTimeout setInterval Promise async await fetch JSON parse stringify Math random floor ceil round pow sqrt abs sin cos tan PI E document window navigator screen history location addEventListener removeEventListener getElementById querySelector querySelectorAll createElement appendChild removeChild innerHTML textContent style className id name value type href src alt title target rel";
         const columns = Math.floor(window.innerWidth / 20)
 
         for (let i = 0; i < columns; i++) {

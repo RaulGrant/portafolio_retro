@@ -573,8 +573,8 @@ export default function Portfolio() {
       {currentSection === 0 && <div id="matrix-bg" className="matrix-bg"></div>}
 
       {/* Current Section */}
-      <div className={`min-h-screen ${sections[currentSection].bgColor} relative z-10 transition-all duration-500`}>
-        <div className="min-h-screen flex items-center justify-center p-4">
+      <div className={`min-h-screen ${sections[currentSection].bgColor} relative z-20 transition-all duration-500`}>
+        <div className="min-h-screen flex items-center justify-center p-4 relative z-30">
           <div className="w-full max-w-6xl mx-auto">
             {/* Desktop Layout */}
             <div className="hidden lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center">

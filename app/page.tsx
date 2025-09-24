@@ -430,35 +430,66 @@ export default function Portfolio() {
         // Clear existing characters
         matrixContainer.innerHTML = ""
 
-        const characters =
-          "01 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 01 10 ";
-        const columns = Math.floor(window.innerWidth / 20)
+        const characters = [
+          "0", "1", " ", "If", "Else", "function", "var", "let", "const", "return", 
+          "for", "while", "do", "switch", "case", "break", "continue", "try", "catch", 
+          "throw", "new", "class", "extends", "super", "this", "true", "false", "null", 
+          "undefined", "NaN", "Infinity", "console", "log", "error", "warn", "info", 
+          "debug", "table", "time", "timeEnd", "clear", "setTimeout", "setInterval", 
+          "Promise", "async", "await", "fetch", "JSON", "parse", "stringify", "Math", 
+          "random", "floor", "ceil", "round", "pow", "sqrt", "abs", "sin", "cos", 
+          "tan", "PI", "E", "document", "window", "navigator", "screen", "history", 
+          "location", "addEventListener", "removeEventListener", "getElementById", 
+          "querySelector", "querySelectorAll", "createElement", "appendChild", 
+          "removeChild", "innerHTML", "textContent", "style", "className", "id", 
+          "name", "value", "type", "href", "src", "alt", "title", "target", "rel"
+        ];
+        
+        const columns = Math.floor(window.innerWidth / 25)
+        const rows = Math.floor(window.innerHeight / 20)
 
-        for (let i = 0; i < columns; i++) {
+        // Create initial falling characters
+        const createMatrixChar = () => {
           const char = document.createElement("div")
           char.className = "matrix-char"
           char.textContent = characters[Math.floor(Math.random() * characters.length)]
-          char.style.left = `${i * 20}px`
-          char.style.animationDelay = `${Math.random() * 3}s`
-          char.style.animationDuration = `${3 + Math.random() * 2}s`
+          char.style.left = `${Math.random() * window.innerWidth}px`
+          char.style.animationDelay = `${Math.random() * 2}s`
+          char.style.animationDuration = `${4 + Math.random() * 3}s`
           matrixContainer.appendChild(char)
+
+          // Remove character after animation completes
+          setTimeout(() => {
+            if (char.parentNode) {
+              char.parentNode.removeChild(char)
+            }
+          }, (4 + Math.random() * 3) * 1000)
+        }
+
+        // Create initial matrix characters
+        for (let i = 0; i < columns * 2; i++) {
+          setTimeout(() => {
+            if (currentSection === 0) {
+              createMatrixChar()
+            }
+          }, Math.random() * 2000)
         }
 
         // Add continuous character generation
         const interval = setInterval(() => {
-          if (currentSection === 0) {
-            const chars = matrixContainer.querySelectorAll(".matrix-char")
-            chars.forEach((char) => {
-              if (Math.random() > 0.98) {
-                char.textContent = characters[Math.floor(Math.random() * characters.length)]
-              }
-            })
-          } else {
+          if (currentSection === 0 && matrixContainer.children.length < columns * 3) {
+            createMatrixChar()
+          } else if (currentSection !== 0) {
             clearInterval(interval)
           }
-        }, 100)
+        }, 200)
 
-        return () => clearInterval(interval)
+        return () => {
+          clearInterval(interval)
+          if (matrixContainer) {
+            matrixContainer.innerHTML = ""
+          }
+        }
       }
     }
   }, [currentSection])

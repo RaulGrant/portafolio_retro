@@ -185,7 +185,7 @@ export default function Portfolio() {
     {
       id: "home",
       title: t.aboutMe,
-      bgColor: "bg-black",
+      bgColor: "bg-transparent",
       consoleIcon: <User className="w-8 h-8 text-white" />,
       consoleBg: "bg-green-400",
       consoleTitle: t.aboutMe,
@@ -467,22 +467,22 @@ export default function Portfolio() {
         }
 
         // Create initial matrix characters
-        for (let i = 0; i < columns * 2; i++) {
+        for (let i = 0; i < columns * 3; i++) {
           setTimeout(() => {
             if (currentSection === 0) {
               createMatrixChar()
             }
-          }, Math.random() * 2000)
+          }, Math.random() * 1000)
         }
 
         // Add continuous character generation
         const interval = setInterval(() => {
-          if (currentSection === 0 && matrixContainer.children.length < columns * 3) {
+          if (currentSection === 0 && matrixContainer.children.length < columns * 5) {
             createMatrixChar()
           } else if (currentSection !== 0) {
             clearInterval(interval)
           }
-        }, 200)
+        }, 150)
 
         return () => {
           clearInterval(interval)

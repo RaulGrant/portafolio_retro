@@ -399,9 +399,10 @@ body {
   font-size: 16px;
   font-weight: bold;
   animation: matrixFall 4s linear infinite;
-  opacity: 0.8;
+  opacity: 0.9;
   text-shadow: 0 0 8px #00ff41, 0 0 12px #00ff41;
   user-select: none;
+  filter: brightness(1.2);
 }
 
 @keyframes matrixFall {
@@ -580,4 +581,14 @@ button,
 .min-h-screen {
   position: relative;
   z-index: 20;
+}
+
+/* Ensure home section has transparent background for matrix visibility */
+.bg-transparent {
+  background-color: transparent !important;
+}
+
+/* Add a subtle dark overlay only for readability when needed */
+.matrix-overlay {
+  background: rgba(0, 0, 0, 0.1);
 }

@@ -577,6 +577,31 @@ button,
   z-index: 50 !important;
 }
 
+/* Language toggle button specific positioning */
+.enhanced-button.fixed {
+  position: fixed !important;
+  z-index: 9999 !important;
+}
+
+/* Responsive adjustments for language button */
+@media (max-width: 768px) {
+  .enhanced-button.fixed {
+    top: 1rem !important;
+    right: 1rem !important;
+    padding: 0.5rem 0.75rem !important;
+    font-size: 6px !important;
+  }
+  
+  .enhanced-button.fixed span {
+    display: none;
+  }
+  
+  .enhanced-button.fixed .w-4 {
+    width: 1rem !important;
+    height: 1rem !important;
+  }
+}
+
 /* Main content containers */
 .min-h-screen {
   position: relative;

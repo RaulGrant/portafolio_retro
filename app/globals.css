@@ -186,6 +186,30 @@ body {
   .tech-icon-card:hover {
     transform: scale(1.1) translateY(-4px);
   }
+
+  /* Fix download CV button centering on mobile */
+  .enhanced-button.flex {
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  .enhanced-button.flex span {
+    white-space: nowrap;
+  }
+
+  /* Improve touch responsiveness on mobile */
+  .pixel-button {
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+
+  .pixel-button:active {
+    transform: scale(0.95);
+  }
 }
 
 /* Smooth transitions */

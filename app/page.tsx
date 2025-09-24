@@ -193,7 +193,7 @@ export default function Portfolio() {
     {
       id: "skills",
       title: t.skills,
-      bgColor: "bg-purple-800",
+      bgColor: "bg-purple-800 bg-opacity-20",
       consoleIcon: (
         <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
           <span className="text-white font-bold text-xs">JS</span>
@@ -205,7 +205,7 @@ export default function Portfolio() {
     {
       id: "project1",
       title: "LinkerPro",
-      bgColor: "bg-red-700",
+      bgColor: "bg-red-700 bg-opacity-20",
       consoleIcon: (
         <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
           <span className="text-blue-600 font-bold text-xs">LP</span>
@@ -218,7 +218,7 @@ export default function Portfolio() {
     {
       id: "project2",
       title: "LinkerStore",
-      bgColor: "bg-blue-700",
+      bgColor: "bg-blue-700 bg-opacity-20",
       consoleIcon: (
         <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
           <span className="text-blue-600 font-bold text-xs">LS</span>
@@ -245,7 +245,7 @@ export default function Portfolio() {
     {
       id: "contact",
       title: t.contact,
-      bgColor: "bg-gray-900",
+      bgColor: "bg-gray-900 bg-opacity-30",
       consoleIcon: <Mail className="w-8 h-8 text-white" />,
       consoleBg: "bg-green-400",
       consoleTitle: t.contact,
@@ -422,73 +422,96 @@ export default function Portfolio() {
     return () => clearInterval(interval)
   }, [])
 
+  // Keyboard navigation for A and B buttons
   useEffect(() => {
-    // Matrix-style background animation for home section
-    if (currentSection === 0) {
-      const matrixContainer = document.getElementById("matrix-bg")
-      if (matrixContainer) {
-        // Clear existing characters
-        matrixContainer.innerHTML = ""
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === 'a' || event.key === 'A') {
+        playSound("button")
+        navigateSection("prev")
+      } else if (event.key === 'b' || event.key === 'B') {
+        playSound("button")
+        navigateSection("next")
+      }
+    }
 
-        const characters = [
-          "0", "1", " ", "If", "Else", "function", "var", "let", "const", "return", 
-          "for", "while", "do", "switch", "case", "break", "continue", "try", "catch", 
-          "throw", "new", "class", "extends", "super", "this", "true", "false", "null", 
-          "undefined", "NaN", "Infinity", "console", "log", "error", "warn", "info", 
-          "debug", "table", "time", "timeEnd", "clear", "setTimeout", "setInterval", 
-          "Promise", "async", "await", "fetch", "JSON", "parse", "stringify", "Math", 
-          "random", "floor", "ceil", "round", "pow", "sqrt", "abs", "sin", "cos", 
-          "tan", "PI", "E", "document", "window", "navigator", "screen", "history", 
-          "location", "addEventListener", "removeEventListener", "getElementById", 
-          "querySelector", "querySelectorAll", "createElement", "appendChild", 
-          "removeChild", "innerHTML", "textContent", "style", "className", "id", 
-          "name", "value", "type", "href", "src", "alt", "title", "target", "rel"
-        ];
-        
-        const columns = Math.floor(window.innerWidth / 25)
-        const rows = Math.floor(window.innerHeight / 20)
+    window.addEventListener('keydown', handleKeyPress)
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress)
+    }
+  }, [])
 
-        // Create initial falling characters
-        const createMatrixChar = () => {
-          const char = document.createElement("div")
-          char.className = "matrix-char"
-          char.textContent = characters[Math.floor(Math.random() * characters.length)]
-          char.style.left = `${Math.random() * window.innerWidth}px`
-          char.style.animationDelay = `${Math.random() * 2}s`
-          char.style.animationDuration = `${4 + Math.random() * 3}s`
-          matrixContainer.appendChild(char)
+  useEffect(() => {
+    // Matrix-style background animation for all sections with different colors
+    const matrixContainer = document.getElementById("matrix-bg")
+    if (matrixContainer) {
+      // Clear existing characters
+      matrixContainer.innerHTML = ""
 
-          // Remove character after animation completes
-          setTimeout(() => {
-            if (char.parentNode) {
-              char.parentNode.removeChild(char)
-            }
-          }, (4 + Math.random() * 3) * 1000)
-        }
+      // Define colors for each section
+      const sectionColors = {
+        0: "#00ff41", // Green for home
+        1: "#8b5cf6", // Purple for skills  
+        2: "#ef4444", // Red for project1 (LinkerPro)
+        3: "#3b82f6", // Blue for project2 (LinkerStore)
+        4: "#10b981", // Green for contact
+      }
 
-        // Create initial matrix characters
-        for (let i = 0; i < columns * 3; i++) {
-          setTimeout(() => {
-            if (currentSection === 0) {
-              createMatrixChar()
-            }
-          }, Math.random() * 1000)
-        }
+      const characters = [
+        "0", "1", " ", "If", "Else", "function", "var", "let", "const", "return", 
+        "for", "while", "do", "switch", "case", "break", "continue", "try", "catch", 
+        "throw", "new", "class", "extends", "super", "this", "true", "false", "null", 
+        "undefined", "NaN", "Infinity", "console", "log", "error", "warn", "info", 
+        "debug", "table", "time", "timeEnd", "clear", "setTimeout", "setInterval", 
+        "Promise", "async", "await", "fetch", "JSON", "parse", "stringify", "Math", 
+        "random", "floor", "ceil", "round", "pow", "sqrt", "abs", "sin", "cos", 
+        "tan", "PI", "E", "document", "window", "navigator", "screen", "history", 
+        "location", "addEventListener", "removeEventListener", "getElementById", 
+        "querySelector", "querySelectorAll", "createElement", "appendChild", 
+        "removeChild", "innerHTML", "textContent", "style", "className", "id", 
+        "name", "value", "type", "href", "src", "alt", "title", "target", "rel"
+      ];
+      
+      const columns = Math.floor(window.innerWidth / 25)
+      const currentColor = sectionColors[currentSection] || "#00ff41"
 
-        // Add continuous character generation
-        const interval = setInterval(() => {
-          if (currentSection === 0 && matrixContainer.children.length < columns * 5) {
-            createMatrixChar()
-          } else if (currentSection !== 0) {
-            clearInterval(interval)
+      // Create initial falling characters
+      const createMatrixChar = () => {
+        const char = document.createElement("div")
+        char.className = "matrix-char"
+        char.textContent = characters[Math.floor(Math.random() * characters.length)]
+        char.style.left = `${Math.random() * window.innerWidth}px`
+        char.style.animationDelay = `${Math.random() * 2}s`
+        char.style.animationDuration = `${4 + Math.random() * 3}s`
+        char.style.color = currentColor
+        char.style.textShadow = `0 0 8px ${currentColor}, 0 0 12px ${currentColor}`
+        matrixContainer.appendChild(char)
+
+        // Remove character after animation completes
+        setTimeout(() => {
+          if (char.parentNode) {
+            char.parentNode.removeChild(char)
           }
-        }, 150)
+        }, (4 + Math.random() * 3) * 1000)
+      }
 
-        return () => {
-          clearInterval(interval)
-          if (matrixContainer) {
-            matrixContainer.innerHTML = ""
-          }
+      // Create initial matrix characters
+      for (let i = 0; i < columns * 2; i++) {
+        setTimeout(() => {
+          createMatrixChar()
+        }, Math.random() * 1000)
+      }
+
+      // Add continuous character generation
+      const interval = setInterval(() => {
+        if (matrixContainer.children.length < columns * 3) {
+          createMatrixChar()
+        }
+      }, 200)
+
+      return () => {
+        clearInterval(interval)
+        if (matrixContainer) {
+          matrixContainer.innerHTML = ""
         }
       }
     }
@@ -593,15 +616,30 @@ export default function Portfolio() {
       {/* Language Toggle Button */}
       <button
         onClick={toggleLanguage}
-        className="fixed top-6 right-6 z-50 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-bold transition-all enhanced-button border-2 border-purple-400 flex items-center space-x-2 shadow-lg"
-        style={{ fontFamily: '"Press Start 2P", monospace', fontSize: "8px" }}
+        className="enhanced-button border-2 border-purple-400 flex items-center space-x-2 shadow-lg"
+        style={{ 
+          position: 'fixed',
+          top: '1.5rem',
+          right: '1.5rem',
+          zIndex: 9999,
+          fontFamily: '"Press Start 2P", monospace', 
+          fontSize: "8px",
+          backgroundColor: '#7c3aed',
+          color: 'white',
+          padding: '0.5rem 1rem',
+          borderRadius: '0.5rem',
+          fontWeight: 'bold',
+          transition: 'all 0.3s ease'
+        }}
+        onMouseEnter={(e) => e.target.style.backgroundColor = '#6d28d9'}
+        onMouseLeave={(e) => e.target.style.backgroundColor = '#7c3aed'}
       >
         <Globe className="w-4 h-4" />
         <span>{language === "es" ? "English Version" : "Versión Español"}</span>
       </button>
 
-      {/* Matrix Background - Only for home section */}
-      {currentSection === 0 && <div id="matrix-bg" className="matrix-bg"></div>}
+      {/* Matrix Background - For all sections */}
+      <div id="matrix-bg" className="matrix-bg"></div>
 
       {/* Current Section */}
       <div className={`min-h-screen ${sections[currentSection].bgColor} relative z-20 transition-all duration-500`}>
@@ -686,8 +724,15 @@ function Console({
     onNavigate(direction)
   }
 
-  const handleButtonClick = () => {
+  const handleButtonClick = (button: "A" | "B") => {
     playSound("button")
+    if (button === "A") {
+      // Button A navigates to previous section
+      onNavigate("prev")
+    } else if (button === "B") {
+      // Button B navigates to next section  
+      onNavigate("next")
+    }
   }
 
   return (
@@ -729,6 +774,10 @@ function Console({
             <button
               className="bg-gray-600 hover:bg-gray-500 rounded pixel-button flex items-center justify-center transition-colors"
               onClick={() => handleNavigation("prev")}
+              onTouchStart={(e) => {
+                e.preventDefault()
+                handleNavigation("prev")
+              }}
             >
               <ChevronUp className="w-3 h-3 lg:w-4 lg:h-4" />
             </button>
@@ -736,6 +785,10 @@ function Console({
             <button
               className="bg-gray-600 hover:bg-gray-500 rounded pixel-button flex items-center justify-center transition-colors"
               onClick={() => handleNavigation("prev")}
+              onTouchStart={(e) => {
+                e.preventDefault()
+                handleNavigation("prev")
+              }}
             >
               <ChevronLeft className="w-3 h-3 lg:w-4 lg:h-4" />
             </button>
@@ -743,6 +796,10 @@ function Console({
             <button
               className="bg-gray-600 hover:bg-gray-500 rounded pixel-button flex items-center justify-center transition-colors"
               onClick={() => handleNavigation("next")}
+              onTouchStart={(e) => {
+                e.preventDefault()
+                handleNavigation("next")
+              }}
             >
               <ChevronRight className="w-3 h-3 lg:w-4 lg:h-4" />
             </button>
@@ -750,6 +807,10 @@ function Console({
             <button
               className="bg-gray-600 hover:bg-gray-500 rounded pixel-button flex items-center justify-center transition-colors"
               onClick={() => handleNavigation("next")}
+              onTouchStart={(e) => {
+                e.preventDefault()
+                handleNavigation("next")
+              }}
             >
               <ChevronDown className="w-3 h-3 lg:w-4 lg:h-4" />
             </button>
@@ -762,14 +823,22 @@ function Console({
           <button
             className={`${buttonSize} bg-red-600 hover:bg-red-500 rounded-full flex items-center justify-center font-bold text-white transition-colors pixel-button`}
             style={{ fontFamily: '"Press Start 2P", monospace', fontSize: isMobile ? "8px" : "10px" }}
-            onClick={handleButtonClick}
+            onClick={() => handleButtonClick("A")}
+            onTouchStart={(e) => {
+              e.preventDefault()
+              handleButtonClick("A")
+            }}
           >
             A
           </button>
           <button
             className={`${buttonSize} bg-blue-600 hover:bg-blue-500 rounded-full flex items-center justify-center font-bold text-white transition-colors pixel-button`}
             style={{ fontFamily: '"Press Start 2P", monospace', fontSize: isMobile ? "8px" : "10px" }}
-            onClick={handleButtonClick}
+            onClick={() => handleButtonClick("B")}
+            onTouchStart={(e) => {
+              e.preventDefault()
+              handleButtonClick("B")
+            }}
           >
             B
           </button>

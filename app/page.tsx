@@ -471,17 +471,17 @@ export default function Portfolio() {
         "name", "value", "type", "href", "src", "alt", "title", "target", "rel"
       ];
       
-      const columns = Math.floor(window.innerWidth / 25)
+      const columns = Math.floor(window.innerWidth / 30)
       const currentColor = sectionColors[currentSection] || "#00ff41"
 
-      // Create initial falling characters
+      // Create matrix characters with staggered delays
       const createMatrixChar = () => {
         const char = document.createElement("div")
         char.className = "matrix-char"
         char.textContent = characters[Math.floor(Math.random() * characters.length)]
         char.style.left = `${Math.random() * window.innerWidth}px`
-        char.style.animationDelay = `${Math.random() * 2}s`
-        char.style.animationDuration = `${4 + Math.random() * 3}s`
+        char.style.animationDelay = `${Math.random() * 3}s`
+        char.style.animationDuration = `${5 + Math.random() * 3}s`
         char.style.color = currentColor
         char.style.textShadow = `0 0 8px ${currentColor}, 0 0 12px ${currentColor}`
         matrixContainer.appendChild(char)
@@ -491,25 +491,33 @@ export default function Portfolio() {
           if (char.parentNode) {
             char.parentNode.removeChild(char)
           }
-        }, (4 + Math.random() * 3) * 1000)
+        }, (5 + Math.random() * 3) * 1000)
       }
 
-      // Create initial matrix characters
-      for (let i = 0; i < columns * 2; i++) {
-        setTimeout(() => {
-          createMatrixChar()
-        }, Math.random() * 1000)
-      }
-
-      // Add continuous character generation
-      const interval = setInterval(() => {
-        if (matrixContainer.children.length < columns * 3) {
-          createMatrixChar()
+      // Start with fewer characters to avoid initial saturation
+      const initialDelay = 500 // Wait 500ms before starting
+      setTimeout(() => {
+        // Create initial matrix characters with staggered start
+        for (let i = 0; i < Math.min(columns, 15); i++) {
+          setTimeout(() => {
+            createMatrixChar()
+          }, Math.random() * 2000) // Spread initial creation over 2 seconds
         }
-      }, 200)
 
+        // Add continuous character generation with longer intervals
+        const interval = setInterval(() => {
+          if (matrixContainer.children.length < columns * 2) {
+            createMatrixChar()
+          }
+        }, 300)
+
+        return () => {
+          clearInterval(interval)
+        }
+      }, initialDelay)
+
+      // Cleanup function
       return () => {
-        clearInterval(interval)
         if (matrixContainer) {
           matrixContainer.innerHTML = ""
         }
@@ -616,26 +624,16 @@ export default function Portfolio() {
       {/* Language Toggle Button */}
       <button
         onClick={toggleLanguage}
-        className="enhanced-button border-2 border-purple-400 flex items-center space-x-2 shadow-lg"
+        className="fixed top-3 right-3 sm:top-4 sm:right-4 md:top-6 md:right-6 z-50 bg-purple-600 hover:bg-purple-700 text-white px-1.5 py-1 sm:px-2 sm:py-1 md:px-4 md:py-2 rounded-lg font-bold transition-all enhanced-button border-2 border-purple-400 flex items-center space-x-1 sm:space-x-1 md:space-x-2 shadow-lg text-xs sm:text-xs md:text-sm"
         style={{ 
-          position: 'fixed',
-          top: '1.5rem',
-          right: '1.5rem',
-          zIndex: 9999,
           fontFamily: '"Press Start 2P", monospace', 
-          fontSize: "8px",
-          backgroundColor: '#7c3aed',
-          color: 'white',
-          padding: '0.5rem 1rem',
-          borderRadius: '0.5rem',
-          fontWeight: 'bold',
-          transition: 'all 0.3s ease'
+          fontSize: "6px"
         }}
-        onMouseEnter={(e) => e.target.style.backgroundColor = '#6d28d9'}
-        onMouseLeave={(e) => e.target.style.backgroundColor = '#7c3aed'}
       >
-        <Globe className="w-4 h-4" />
-        <span>{language === "es" ? "English Version" : "Versión Español"}</span>
+        <Globe className="w-3 h-3 sm:w-3 sm:h-3 md:w-4 md:h-4" />
+        <span className="hidden sm:inline">{language === "es" ? "EN" : "ES"}</span>
+        <span className="hidden md:inline">{language === "es" ? "English Version" : "Versión Español"}</span>
+        <span className="sm:hidden">{language === "es" ? "EN" : "ES"}</span>
       </button>
 
       {/* Matrix Background - For all sections */}
@@ -651,7 +649,45 @@ export default function Portfolio() {
               <div className="animate-slide-in-left">{renderCurrentSection()}</div>
 
               {/* Right Side - Console */}
-              <div className="flex justify-center animate-slide-in-right">
+              <div className="flex flex-col items-center animate-slide-in-right space-y-4">
+                {/* Instructions above console for desktop */}
+                <div className="bg-gray-800 bg-opacity-90 rounded-lg p-4 border-2 border-purple-400 shadow-lg max-w-sm">
+                  <p 
+                    className="text-purple-300 text-sm font-bold mb-3 text-center animate-pulse"
+                    style={{ fontFamily: '"Press Start 2P", monospace', fontSize: "8px" }}
+                  >
+                    {language === "es" ? "🎮 CONTROLES DEL PORTAFOLIO" : "🎮 PORTFOLIO CONTROLS"}
+                  </p>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-white text-xs">
+                      <span style={{ fontFamily: "Montserrat, sans-serif" }}>
+                        {language === "es" ? "Teclas:" : "Keys:"}
+                      </span>
+                      <div className="flex items-center space-x-2">
+                        <div className="bg-gray-700 rounded px-2 py-1 text-xs">A</div>
+                        <div className="bg-gray-700 rounded px-2 py-1 text-xs">B</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between text-white text-xs">
+                      <span style={{ fontFamily: "Montserrat, sans-serif" }}>
+                        {language === "es" ? "Flechas:" : "Arrows:"}
+                      </span>
+                      <div className="flex items-center space-x-1">
+                        <ChevronLeft className="w-4 h-4 text-green-400" />
+                        <ChevronRight className="w-4 h-4 text-green-400" />
+                        <ChevronUp className="w-4 h-4 text-green-400" />
+                        <ChevronDown className="w-4 h-4 text-green-400" />
+                      </div>
+                    </div>
+                  </div>
+                  <p 
+                    className="text-gray-300 text-center mt-2 text-xs"
+                    style={{ fontFamily: "Montserrat, sans-serif", fontSize: "10px" }}
+                  >
+                    {language === "es" ? "Navega entre las secciones" : "Navigate between sections"}
+                  </p>
+                </div>
+                
                 <div className="console-enhanced">
                   <Console
                     currentSection={currentSection}
@@ -666,6 +702,36 @@ export default function Portfolio() {
 
             {/* Mobile Layout */}
             <div className="lg:hidden space-y-8">
+              {/* Instructions above console for mobile */}
+              <div className="text-center animate-slide-in-up px-4">
+                <div className="bg-gray-800 bg-opacity-90 rounded-lg p-3 border-2 border-purple-400 shadow-lg">
+                  <p 
+                    className="text-purple-300 text-xs font-bold mb-2 animate-pulse"
+                    style={{ fontFamily: '"Press Start 2P", monospace', fontSize: "6px" }}
+                  >
+                    {language === "es" ? "🎮 USA LOS CONTROLES" : "🎮 USE THE CONTROLS"}
+                  </p>
+                  <div className="flex items-center justify-center space-x-2 text-white">
+                    <div className="flex items-center space-x-1 text-xs">
+                      <span className="text-red-400 font-bold">A</span>
+                      <span className="text-gray-300">/</span>
+                      <span className="text-blue-400 font-bold">B</span>
+                    </div>
+                    <span className="text-gray-400 text-xs">o</span>
+                    <div className="flex items-center space-x-1">
+                      <ChevronLeft className="w-3 h-3 text-green-400" />
+                      <ChevronRight className="w-3 h-3 text-green-400" />
+                    </div>
+                  </div>
+                  <p 
+                    className="text-gray-300 text-xs mt-1"
+                    style={{ fontFamily: "Montserrat, sans-serif", fontSize: "8px" }}
+                  >
+                    {language === "es" ? "Para navegar secciones" : "To navigate sections"}
+                  </p>
+                </div>
+              </div>
+
               {/* Console at top for mobile */}
               <div className="flex justify-center animate-bounce-in">
                 <div className="console-enhanced">
